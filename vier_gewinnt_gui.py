@@ -67,13 +67,13 @@ class VierGewinntGUI:
             if messagebox.askyesno("Spielende", f"Spieler {self.current_symbol} gewinnt!\nNeues Spiel starten?"):
                 self.choose_game_mode()
             else:
-                self.disable_buttons()
+                self.root.destroy()
             return
         if is_draw(self.board):
             if messagebox.askyesno("Spielende", "Unentschieden!\nNeues Spiel starten?"):
                 self.choose_game_mode()
             else:
-                self.disable_buttons()
+                self.root.destroy()
             return
         self.current_symbol = switch_player(self.current_symbol)
         if self.vs_computer and self.player_types[self.current_symbol] == 'computer':
