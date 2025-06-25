@@ -55,9 +55,33 @@ def get_human_move(board):
         except ValueError:
             print("Bitte gib eine Zahl ein.")
 
-def get_computer_move(board):
+def get_computer_move(board, computer_symbol, human_symbol):
+    # 1. Gewinnzug suchen
+    for col in range(COLUMNS):
+        if is_valid_move(board, col):
+            temp_board = [row[:] for row in board]
+            row_col = make_move(temp_board, col, computer_symbol)
+            if row_col and check_win(temp_board, row_col[0], row_col[1], computer_symbol):
+                return col
+
+    # 2. Blockiere gegnerischen Gewinn
+    for col in range(COLUMNS):
+        if is_valid_move(board, col):
+            temp_board = [row[:] for row in board]
+            row_col = make_move(temp_board, col, human_symbol)
+            if row_col and check_win(temp_board, row_col[0], row_col[1], human_symbol):
+                return col
+
+    # 3. Zentrum bevorzugen
+    if is_valid_move(board, 3):
+        return 3
+
+    # 4. Sonst bestmöglicher Zug aus gültigen Zügen (leicht smartere Zufallswahl)
     valid_moves = [c for c in range(COLUMNS) if is_valid_move(board, c)]
-    return random.choice(valid_moves)
+    preferred = [3, 2, 4, 1, 5, 0, 6]  # Spalten nach Nähe zur Mitte
+    for col in preferred:
+        if col in valid_moves:
+            return col
 
 def main():
     print("Willkommen bei Vier Gewinnt!")
@@ -94,10 +118,11 @@ def main():
         print(f"Spieler {current_symbol} ({'Computer' if player_type == 'computer' else 'Mensch'}) ist am Zug.")
 
         if player_type == 'human':
-            col = get_human_move(board)
+         col = get_human_move(board)
         else:
-            col = get_computer_move(board)
-            print(f"Computer wählt Spalte {col}")
+         human_symbol = switch_player(current_symbol)
+         col = get_computer_move(board, current_symbol, human_symbol)
+         print(f"Computer wählt Spalte {col}")
 
         move = make_move(board, col, current_symbol)
         if move is None:
