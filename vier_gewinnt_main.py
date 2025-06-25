@@ -12,7 +12,6 @@ AI_PIECE = 2
 
 # Minimax-Konfiguration
 WINDOW_LENGTH = 4
-DEPTH = 4  # Maximale Tiefe für Minimax
 
 # Spielfeld erstellen
 def create_board():
@@ -174,6 +173,21 @@ def main():
     print("Willkommen zu Vier gewinnt!")
     print("Modus wählen: 1 - Zwei Spieler, 2 - Spieler gegen KI")
     mode = input("Eingabe: ")
+
+    if mode == "2":
+        while True:
+            try:
+                level = int(input("Wähle Schwierigkeitsgrad (1 = leicht, 6 = schwer): "))
+                if 1 <= level <= 6:
+                    global DEPTH
+                    DEPTH = level
+                    print(f"KI-Suchtiefe (DEPTH) wurde auf {DEPTH} gesetzt.")
+                    break
+                else:
+                    print("Bitte eine Zahl zwischen 1 und 6 eingeben.")
+            except ValueError:
+                print("Ungültige Eingabe – bitte eine ganze Zahl zwischen 1 und 6.")
+
     while mode not in ("1", "2"):
         mode = input("Bitte 1 oder 2 eingeben: ")
 
