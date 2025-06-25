@@ -31,27 +31,32 @@ class VierGewinntGUI:
         game_menu.add_command(label="Beenden", command=self.root.quit)
 
     def create_widgets(self):
-        frame = tk.Frame(self.root)
-        frame.pack()
+        self.frame = tk.Frame(self.root)
+        self.frame.pack()
         self.buttons = []
         for col in range(COLUMNS):
-            btn = tk.Button(frame, text=str(col), width=4, height=2, command=lambda c=col: self.handle_move(c))
+            btn = tk.Button(self.frame, text=str(col), width=4, height=2, command=lambda c=col: self.handle_move(c))
             btn.grid(row=0, column=col)
             self.buttons.append(btn)
-        self.labels = [[None for _ in range(COLUMNS)] for _ in range(ROWS)]
+        # Use Canvas for round slots
+        self.canvas = tk.Canvas(self.frame, width=COLUMNS*60, height=ROWS*60, bg='blue', highlightthickness=0)
+        self.canvas.grid(row=1, column=0, columnspan=COLUMNS)
+        self.canvas_slots = [[None for _ in range(COLUMNS)] for _ in range(ROWS)]
         for r in range(ROWS):
             for c in range(COLUMNS):
-                lbl = tk.Label(frame, text=' ', width=4, height=2, relief='ridge', borderwidth=2, font=('Arial', 16), bg='blue', fg='white')
-                lbl.grid(row=r+1, column=c)
-                self.labels[r][c] = lbl
+                x1 = c*60+5
+                y1 = r*60+5
+                x2 = x1+50
+                y2 = y1+50
+                oval = self.canvas.create_oval(x1, y1, x2, y2, fill='white', outline='black', width=2)
+                self.canvas_slots[r][c] = oval
 
     def update_board(self):
         for r in range(ROWS):
             for c in range(COLUMNS):
                 symbol = self.board[r][c]
                 color = 'white' if symbol == ' ' else ('red' if symbol == 'X' else 'yellow')
-                self.labels[r][c]['text'] = symbol
-                self.labels[r][c]['bg'] = color if symbol != ' ' else 'blue'
+                self.canvas.itemconfig(self.canvas_slots[r][c], fill=color)
 
     def handle_move(self, col):
         if not is_valid_move(self.board, col):
