@@ -144,13 +144,12 @@ def play_game():
 
 def main():
     while True:
-     play_game()
-     erneut = input("Möchtest du erneut spielen? (j/n): ").strip().lower()
-     if erneut != 'j':
-      print("Danke fürs Spielen! Auf Wiedersehen.")
-     break
+        play_game()
+        erneut = input("Möchtest du erneut spielen? (j/n): ").strip().lower()
+        if erneut != 'j':
+            print("Danke fürs Spielen! Auf Wiedersehen.")
+            break
 
 if __name__ == "__main__":
     main()
 
- 
