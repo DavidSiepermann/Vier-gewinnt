@@ -171,57 +171,50 @@ def get_player_move(board):
 # Spielstart
 def main():
     print("Willkommen zu Vier gewinnt!")
-    print("Modus wählen: 1 - Zwei Spieler, 2 - Spieler gegen KI")
-    mode = input("Eingabe: ")
+    
+    while True:  # Spielwiederholungsschleife
+        print("Modus wählen: 1 - Zwei Spieler, 2 - Spieler gegen KI")
+        mode = input("Eingabe: ")
+        while mode not in ("1", "2"):
+            mode = input("Bitte 1 oder 2 eingeben: ")
 
-    if mode == "2":
-        while True:
-            try:
-                level = int(input("Wähle Schwierigkeitsgrad (1 = leicht, 6 = schwer): "))
-                if 1 <= level <= 6:
-                    global DEPTH
-                    DEPTH = level
-                    print(f"KI-Suchtiefe (DEPTH) wurde auf {DEPTH} gesetzt.")
-                    break
+        board = create_board()
+        game_over = False
+        turn = 0  # 0 = Spieler 1, 1 = Spieler 2 / KI
+
+        while not game_over:
+            print_board(board)
+
+            if mode == "1" or turn == 0:
+                col = get_player_move(board)
+            else:
+                print("Computer denkt...")
+                col, _ = minimax(board, DEPTH, -math.inf, math.inf, True)
+                print(f"Computer wählt Spalte {col+1}")
+
+            piece = PLAYER_PIECE if turn == 0 else AI_PIECE if mode == "2" else 2
+
+            if is_valid_location(board, col):
+                drop_piece(board, col, piece)
+                if check_win(board, piece):
+                    print_board(board)
+                    if mode == "2" and turn == 1:
+                        print("Computer gewinnt!")
+                    else:
+                        print(f"Spieler {piece} gewinnt!")
+                    game_over = True
+                elif is_draw(board):
+                    print_board(board)
+                    print("Unentschieden!")
+                    game_over = True
                 else:
-                    print("Bitte eine Zahl zwischen 1 und 6 eingeben.")
-            except ValueError:
-                print("Ungültige Eingabe – bitte eine ganze Zahl zwischen 1 und 6.")
+                    turn ^= 1  # Spieler wechseln
 
-    while mode not in ("1", "2"):
-        mode = input("Bitte 1 oder 2 eingeben: ")
-
-    board = create_board()
-    game_over = False
-    turn = 0  # 0 = Spieler 1, 1 = Spieler 2 / KI
-
-    while not game_over:
-        print_board(board)
-
-        if mode == "1" or turn == 0:
-            col = get_player_move(board)
-        else:
-            print("Computer denkt...")
-            col, _ = minimax(board, DEPTH, -math.inf, math.inf, True)
-            print(f"Computer wählt Spalte {col+1}")
-
-
-        piece = PLAYER_PIECE if turn == 0 else AI_PIECE if mode == "2" else 2
-
-        if is_valid_location(board, col):
-            drop_piece(board, col, piece)
-            if check_win(board, piece):
-                print_board(board)
-                if mode == "2" and turn == 1:
-                    print("Computer gewinnt!")
-                else:
-                    print(f"Spieler {piece} gewinnt!")
-                game_over = True
-            elif is_draw(board):
-                print_board(board)
-                print("Unentschieden!")
-                game_over = True
-            turn ^= 1  # Spieler wechseln
+        # Nach Spielende fragen, ob eine neue Runde gestartet werden soll
+        again = input("Möchten Sie eine neue Runde spielen? (j/n): ").strip().lower()
+        if again != 'j':
+            print("Vielen Dank fürs Spielen!")
+            break
 
 if __name__ == "__main__":
     main()
