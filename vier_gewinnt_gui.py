@@ -98,19 +98,43 @@ class VierGewinntGUI:
             btn.config(state='normal')
 
     def choose_game_mode(self):
-        mode = tkinter.simpledialog.askstring(
-            "Spielmodus wählen",
-            "Modus wählen:\n1 = Mensch vs. Mensch\n2 = Mensch vs. Computer",
-            parent=self.root
-        )
-        if mode == '2':
+        # Custom dialog for game mode selection
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Spielmodus wählen")
+        dialog.grab_set()
+        tk.Label(dialog, text="Modus wählen:", font=("Arial", 12)).pack(padx=20, pady=10)
+        mode_var = tk.StringVar()
+        def set_mode(mode):
+            mode_var.set(mode)
+            dialog.destroy()
+        btn1 = tk.Button(dialog, text="Mensch vs. Mensch", width=20, command=lambda: set_mode('human'))
+        btn1.pack(pady=5)
+        btn2 = tk.Button(dialog, text="Mensch vs. Computer", width=20, command=lambda: set_mode('computer'))
+        btn2.pack(pady=5)
+        dialog.wait_window()
+        mode = mode_var.get()
+        if mode == 'computer':
             self.vs_computer = True
             self.player_types = {'X': 'human', 'O': 'computer'}
+            first_options = [('Mensch', 'X'), ('Computer', 'O')]
         else:
             self.vs_computer = False
             self.player_types = {'X': 'human', 'O': 'human'}
+            first_options = [('Spieler 1 (X)', 'X'), ('Spieler 2 (O)', 'O')]
+        # Ask who starts
+        dialog2 = tk.Toplevel(self.root)
+        dialog2.title("Wer beginnt?")
+        dialog2.grab_set()
+        tk.Label(dialog2, text="Wer soll beginnen?", font=("Arial", 12)).pack(padx=20, pady=10)
+        first_var = tk.StringVar()
+        def set_first(symbol):
+            first_var.set(symbol)
+            dialog2.destroy()
+        for text, symbol in first_options:
+            tk.Button(dialog2, text=text, width=16, command=lambda s=symbol: set_first(s)).pack(padx=10, pady=8)
+        dialog2.wait_window()
         self.board = create_board()
-        self.current_symbol = 'X'
+        self.current_symbol = first_var.get() or 'X'
         self.update_board()
         self.enable_buttons()
 
@@ -127,5 +151,7 @@ class VierGewinntGUI:
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.withdraw()  # Hide main window at start
     app = VierGewinntGUI(root)
+    root.deiconify()  # Show main window after dialogs
     root.mainloop()
