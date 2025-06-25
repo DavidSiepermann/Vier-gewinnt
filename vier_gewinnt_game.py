@@ -83,7 +83,7 @@ def get_computer_move(board, computer_symbol, human_symbol):
         if col in valid_moves:
             return col
 
-def main():
+def play_game():
     print("Willkommen bei Vier Gewinnt!")
 
     # Spielmodus wählen
@@ -118,11 +118,11 @@ def main():
         print(f"Spieler {current_symbol} ({'Computer' if player_type == 'computer' else 'Mensch'}) ist am Zug.")
 
         if player_type == 'human':
-         col = get_human_move(board)
+            col = get_human_move(board)
         else:
-         human_symbol = switch_player(current_symbol)
-         col = get_computer_move(board, current_symbol, human_symbol)
-         print(f"Computer wählt Spalte {col}")
+            human_symbol = switch_player(current_symbol)
+            col = get_computer_move(board, current_symbol, human_symbol)
+            print(f"Computer wählt Spalte {col}")
 
         move = make_move(board, col, current_symbol)
         if move is None:
@@ -142,5 +142,15 @@ def main():
 
         current_symbol = switch_player(current_symbol)
 
+def main():
+    while True:
+     play_game()
+     erneut = input("Möchtest du erneut spielen? (j/n): ").strip().lower()
+     if erneut != 'j':
+      print("Danke fürs Spielen! Auf Wiedersehen.")
+     break
+
 if __name__ == "__main__":
     main()
+
+ 
