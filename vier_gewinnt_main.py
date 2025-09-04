@@ -13,6 +13,8 @@ AI_PIECE = 2
 # Minimax-Konfiguration
 WINDOW_LENGTH = 4
 
+DEPTH = 4
+
 # Spielfeld erstellen
 def create_board():
     return [[EMPTY for _ in range(COLS)] for _ in range(ROWS)]
